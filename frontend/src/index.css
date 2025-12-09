@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-mind-bg text-mind-textMain font-sans;
+}
+
+/* Scrollbar soft styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3eee5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e0d4f3;
+  border-radius: 999px;
+}
