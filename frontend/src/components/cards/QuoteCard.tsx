@@ -1,5 +1,14 @@
 import React from "react";
-import { Card, CardContent } from "../ui/Card";
+// Removed: import { Card, CardContent } from "../ui/Card"; 
+// Since we are not using Card components
+
+// --- DARK MODE COLOR DEFINITIONS ---
+// Text Color: Bright white for main content
+const TEXT_BRIGHT = "dark:text-white"; 
+// Text Color: Bright, slightly muted purple for secondary titles/labels
+const TEXT_MUTED_PURPLE = "dark:text-[#D9C8FF]";
+//-------------------------------------
+
 
 const quotes = [
   "Study gently. Small steps add up.",
@@ -16,16 +25,20 @@ function pickQuote() {
 
 const QuoteCard: React.FC = () => {
   return (
-    <Card>
-      <CardContent>
-        <div className="text-xs font-semibold uppercase tracking-wide text-mind-textSoft">
-          Today&apos;s gentle reminder
-        </div>
-        <p className="mt-2 text-sm text-mind-textMain">
-          “{pickQuote()}”
-        </p>
-      </CardContent>
-    </Card>
+    // REVISED: This div now carries NO background, NO border, and NO rounded corners.
+    // It relies on the parent component (HomePage) for that styling.
+    <div className="p-0"> 
+      
+      {/* Apply bright purple text for the uppercase title */}
+      <div className={`text-xs font-semibold uppercase tracking-wide text-mind-textSoft ${TEXT_MUTED_PURPLE}`}>
+        Today&apos;s gentle reminder
+      </div>
+      
+      {/* Apply bright white text for the quote itself */}
+      <p className={`mt-2 text-sm text-mind-textMain ${TEXT_BRIGHT}`}>
+        “{pickQuote()}”
+      </p>
+    </div>
   );
 };
 

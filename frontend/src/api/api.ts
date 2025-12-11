@@ -3,10 +3,24 @@ import {
   JournalEntry,
   MoodEntry,
   Task,
-  ChatResponse
+  ChatResponse,
 } from "../types";
 
 const BASE_URL = "http://localhost:8000";
+
+// ------------------------------
+// TOKEN STORAGE
+// ------------------------------
+const TOKEN_KEY = "mindstudy_token";
+
+function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function authHeader(): Record<string, string> {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -16,12 +30,39 @@ async function handleResponse<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+// =====================================================
+// API OBJECT
+// =====================================================
 export const api = {
   // ------------------------------
-  // HEALTH
+  // AUTH
   // ------------------------------
-  async health(): Promise<{ status: string }> {
-    const res = await fetch(`${BASE_URL}/health`);
+  async signup(email: string, password: string) {
+    const res = await fetch(`${BASE_URL}/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    return handleResponse(res);
+  },
+
+  async login(email: string, password: string): Promise<{ success: boolean }> {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await handleResponse<{ access_token: string }>(res);
+    localStorage.setItem(TOKEN_KEY, data.access_token);
+
+    return { success: true };
+  },
+
+  async getMe() {
+    const res = await fetch(`${BASE_URL}/auth/me`, {
+      headers: { ...authHeader() },
+    });
     return handleResponse(res);
   },
 
@@ -43,7 +84,7 @@ export const api = {
     const res = await fetch(`${BASE_URL}/mood/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return handleResponse(res);
   },
@@ -58,14 +99,14 @@ export const api = {
 
   async createTask(payload: {
     title: string;
-    description?: string;
-    due_date?: string | null;
+    description?: string | null;
+    due_datetime?: string | null;
     mood_tag?: string | null;
   }): Promise<Task> {
     const res = await fetch(`${BASE_URL}/tasks/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return handleResponse(res);
   },
@@ -73,15 +114,25 @@ export const api = {
   async updateTask(
     id: number,
     payload: Partial<
-      Pick<Task, "title" | "description" | "due_date" | "mood_tag" | "is_completed">
+      Pick<
+        Task,
+        "title" | "description" | "due_datetime" | "mood_tag" | "is_completed"
+      >
     >
   ): Promise<Task> {
     const res = await fetch(`${BASE_URL}/tasks/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return handleResponse(res);
+  },
+
+  async deleteTask(id: number): Promise<void> {
+    const res = await fetch(`${BASE_URL}/tasks/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error(await res.text());
   },
 
   // ------------------------------
@@ -102,25 +153,48 @@ export const api = {
     const res = await fetch(`${BASE_URL}/journal/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+
+  async deleteJournal(id: number) {
+    const res = await fetch(`${BASE_URL}/journal/${id}`, {
+      method: "DELETE",
+    });
+    return handleResponse(res);
+  },
+
+  async updateJournal(id: number, data: any) {
+    const res = await fetch(`${BASE_URL}/journal/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  async reflectOnJournal(id: number): Promise<{ reflection: string }> {
+    const res = await fetch(`${BASE_URL}/journal/${id}/reflect`, {
+      method: "POST",
     });
     return handleResponse(res);
   },
 
   // ------------------------------
-  // EMOTION ANALYSIS
+  // EMOTION ANALYSIS  ✅ THIS WAS MISSING
   // ------------------------------
   async analyzeEmotion(text: string): Promise<EmotionResponse> {
     const res = await fetch(`${BASE_URL}/emotion/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text }),
     });
     return handleResponse(res);
   },
 
   // ------------------------------
-  // GOOGLE CALENDAR
+  // GOOGLE CALENDAR (correct backend paths)
   // ------------------------------
   async getGoogleCalendarStatus(): Promise<{ connected: boolean }> {
     const res = await fetch(`${BASE_URL}/google-calendar/status`);
@@ -131,35 +205,27 @@ export const api = {
     const res = await fetch(`${BASE_URL}/google-calendar/auth-url`);
     return handleResponse(res);
   },
-    async deleteTask(id: number): Promise<void> {
-    const res = await fetch(`${BASE_URL}/tasks/${id}`, {
-      method: "DELETE"
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || "Failed to delete task");
-    }
-  },
+
+  async disconnectGoogleCalendar(): Promise<{ success: boolean }> {
+  const res = await fetch(`${BASE_URL}/google-calendar/disconnect`, {
+    method: "POST",
+    headers: { ...authHeader() }
+  });
+  return handleResponse(res);
+},
 
 
-  // ⭐ UPDATED TO MATCH NEW BACKEND ⭐
   async createCalendarEvent(payload: {
     title: string;
     description: string;
-    date: string;               // "YYYY-MM-DD"
-    start_time: string;         // "HH:MM"
-    duration_minutes: number;   // number of minutes
-  }): Promise<{
-    status: string;
-    event_id: string;
-    event_link: string;
-    start: string;
-    end: string;
-  }> {
+    date: string;
+    start_time: string;
+    duration_minutes: number;
+  }) {
     const res = await fetch(`${BASE_URL}/google-calendar/events`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
     return handleResponse(res);
   },
@@ -171,8 +237,8 @@ export const api = {
     const res = await fetch(`${BASE_URL}/chat/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message }),
     });
     return handleResponse(res);
-  }
+  },
 };

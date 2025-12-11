@@ -39,12 +39,12 @@ const MoodSelector: React.FC = () => {
           </Button>
         ))}
       </div>
-      <Textarea
+      {/* <Textarea
         rows={3}
         placeholder="Optional: add a tiny note about your mood..."
         value={note}
         onChange={(e) => setNote(e.target.value)}
-      />
+      /> */}
       <div className="flex justify-end">
         <Button
           variant="primary"

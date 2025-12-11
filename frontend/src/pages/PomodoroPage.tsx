@@ -12,6 +12,16 @@ import { X, ListTodo } from "lucide-react";
 
 type Mode = "work" | "break";
 
+// --- DARK MODE COLOR DEFINITIONS ---
+// Card Background (Main): Lighter than app background
+const CARD_BG_DARK = "dark:bg-[#2C2435]"; 
+// Card Background (Soft/Inner Elements/Buttons): Lighter than main cards
+const CARD_SOFT_BG_DARK = "dark:bg-[#362C47]";
+// Timer Progress Track Color (Dark Mode) - Needs a visible color against the progress fill
+const TIMER_TRACK_DARK = "#4A3C60"; 
+//-------------------------------------
+
+
 const PomodoroPage: React.FC = () => {
   const { tasks } = useAppContext();
 
@@ -111,18 +121,25 @@ const PomodoroPage: React.FC = () => {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold text-mind-textMain flex items-center gap-2">
-          <span className="text-3xl">⏱️</span>
-          Gentle Focus Timer
-        </h1>
-        <p className="text-sm text-mind-textSoft">
-          Short, kind sprints that respect your energy—no pressure, just
-          presence.
-        </p>
+        <h1 className="
+  text-3xl font-bold 
+  text-mind-textMain 
+  dark:text-[#D9C8FF]
+  drop-shadow-sm
+  flex items-center gap-2
+">
+  <span className="text-3xl">⏱️</span>
+  Gentle Focus Timer
+</h1>
+
+<p className="text-sm text-mind-textSoft dark:text-[#B8A2E0] mt-1">
+  Short, kind sprints that respect your energy—no pressure, just presence.
+</p>
       </div>
 
       {/* Main Pomodoro Card */}
-      <Card className="bg-white/90">
+      {/* FIX: Apply CARD_BG_DARK to the main card */}
+      <Card className={`bg-white/90 ${CARD_BG_DARK}`}>
         <CardHeader className="pb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
             <CardTitle>Pomodoro Session</CardTitle>
@@ -144,7 +161,8 @@ const PomodoroPage: React.FC = () => {
                   setWorkMinutes(Math.max(1, Number(e.target.value) || 1))
                 }
                 disabled={isRunning}
-                className="w-16 h-8 text-xs"
+                // FIX: Input needs dark mode styling
+                className="w-16 h-8 text-xs dark:bg-[#362C47] dark:text-white dark:border-[#4A3C60] dark:placeholder-text-mind-textSoft"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -158,12 +176,14 @@ const PomodoroPage: React.FC = () => {
                   setBreakMinutes(Math.max(1, Number(e.target.value) || 1))
                 }
                 disabled={isRunning}
-                className="w-16 h-8 text-xs"
+                // FIX: Input needs dark mode styling
+                className="w-16 h-8 text-xs dark:bg-[#362C47] dark:text-white dark:border-[#4A3C60] dark:placeholder-text-mind-textSoft"
               />
             </div>
             <div className="flex items-center gap-2">
               <span className="text-mind-textSoft">Cycle</span>
-              <span className="rounded-full bg-mind-cardSoft px-2 py-0.5 text-[11px] text-mind-textMain">
+              {/* FIX: Apply CARD_SOFT_BG_DARK to the cycle badge */}
+              <span className={`rounded-full bg-mind-cardSoft px-2 py-0.5 text-[11px] text-mind-textMain ${CARD_SOFT_BG_DARK} dark:text-white`}>
                 {cycle}
               </span>
             </div>
@@ -180,15 +200,17 @@ const PomodoroPage: React.FC = () => {
                 style={{
                   width: "190px",
                   height: "190px",
+                  // FIX: Update background color for dark mode contrast
                   background: `conic-gradient(#C7B3F0 ${progress *
-                    3.6}deg, #F3EDE4 ${progress * 3.6}deg)`,
+                    3.6}deg, ${TIMER_TRACK_DARK} ${progress * 3.6}deg)`,
                 }}
               >
-                <div className="flex h-[150px] w-[150px] flex-col items-center justify-center rounded-full bg-mind-bg border border-mind-border/70">
+                {/* FIX: Apply CARD_SOFT_BG_DARK to the inner timer circle */}
+                <div className={`flex h-[150px] w-[150px] flex-col items-center justify-center rounded-full bg-mind-bg border border-mind-border/70 ${CARD_SOFT_BG_DARK} dark:border-[#4A3C60]`}>
                   <div className="text-xs uppercase tracking-wide text-mind-textSoft">
                     {modeLabel}
                   </div>
-                  <div className="mt-1 text-3xl font-semibold text-mind-textMain">
+                  <div className="mt-1 text-3xl font-semibold text-mind-textMain dark:text-white">
                     {formattedTime()}
                   </div>
                   <div className="mt-1 text-[11px] text-mind-textMuted">
@@ -206,7 +228,8 @@ const PomodoroPage: React.FC = () => {
               >
                 {isRunning ? "Pause" : "Start"}
               </Button>
-              <Button variant="outline" onClick={handleReset}>
+              {/* FIX: Ensure Outline button looks correct in dark mode */}
+              <Button variant="outline" onClick={handleReset} className="dark:text-white dark:border-[#4A3C60] hover:dark:bg-[#4A3C60]/30">
                 Reset
               </Button>
             </div>
@@ -219,7 +242,8 @@ const PomodoroPage: React.FC = () => {
           {/* Right: Active task & info */}
           <div className="space-y-4">
             {/* Active Task */}
-            <div className="rounded-2xl border border-mind-border bg-mind-cardSoft px-4 py-3">
+            {/* FIX: Apply CARD_SOFT_BG_DARK to the active task box */}
+            <div className={`rounded-2xl border border-mind-border bg-mind-cardSoft px-4 py-3 ${CARD_SOFT_BG_DARK} dark:border-[#4A3C60]`}>
               <div className="mb-1 flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wide text-mind-textSoft">
                   Active task
@@ -227,7 +251,7 @@ const PomodoroPage: React.FC = () => {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="flex items-center gap-1 text-xs"
+                  className="flex items-center gap-1 text-xs dark:text-[#C7B3F0] hover:dark:bg-[#4A3C60]/30"
                   type="button"
                   onClick={openTaskModal}
                 >
@@ -235,7 +259,7 @@ const PomodoroPage: React.FC = () => {
                   Choose task
                 </Button>
               </div>
-              <p className="text-sm text-mind-textMain">
+              <p className="text-sm text-mind-textMain dark:text-white">
                 {activeTask || "No task selected yet"}
               </p>
               <p className="mt-1 text-[11px] text-mind-textMuted">
@@ -245,9 +269,10 @@ const PomodoroPage: React.FC = () => {
             </div>
 
             {/* Info block */}
-            <div className="rounded-2xl border border-mind-border bg-mind-bg px-4 py-3 text-xs text-mind-textSoft space-y-1">
+            {/* FIX: Apply CARD_SOFT_BG_DARK to the info box (using bg-mind-bg) */}
+            <div className={`rounded-2xl border border-mind-border bg-mind-bg px-4 py-3 text-xs text-mind-textSoft space-y-1 ${CARD_SOFT_BG_DARK} dark:border-[#4A3C60]`}>
               <p>
-                • Try doing just <span className="font-semibold">one</span> full
+                • Try doing just <span className="font-semibold dark:text-white">one</span> full
                 focus block before judging your productivity.
               </p>
               <p>
@@ -261,15 +286,17 @@ const PomodoroPage: React.FC = () => {
 
       {/* Modal for selecting/creating task */}
       {showTaskModal && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl bg-white p-4 shadow-soft border border-mind-border">
+        // FIX: Apply dark mode colors to the entire modal structure
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          {/* FIX: Apply CARD_BG_DARK to the modal body */}
+          <div className={`w-full max-w-md rounded-2xl bg-white p-4 shadow-soft border border-mind-border ${CARD_BG_DARK} dark:border-[#4A3C60] dark:text-white`}>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-mind-textMain">
+              <h2 className="text-sm font-semibold text-mind-textMain dark:text-white">
                 Choose or create a task
               </h2>
               <button
                 onClick={() => setShowTaskModal(false)}
-                className="text-mind-textSoft hover:text-mind-textMain"
+                className="text-mind-textSoft hover:text-mind-textMain dark:text-[#B8A2E0] hover:dark:text-white"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -297,7 +324,8 @@ const PomodoroPage: React.FC = () => {
                     {tasks.map((t) => (
                       <label
                         key={t.id}
-                        className="flex cursor-pointer items-center gap-2 rounded-xl border border-mind-border bg-mind-cardSoft px-2 py-1 text-xs text-mind-textMain hover:bg-mind-primary/20"
+                        // FIX: Apply CARD_SOFT_BG_DARK to modal task item
+                        className={`flex cursor-pointer items-center gap-2 rounded-xl border border-mind-border bg-mind-cardSoft px-2 py-1 text-xs text-mind-textMain hover:bg-mind-primary/20 ${CARD_SOFT_BG_DARK} dark:border-[#4A3C60] dark:text-white`}
                       >
                         <input
                           type="radio"
@@ -305,6 +333,7 @@ const PomodoroPage: React.FC = () => {
                           value={t.id}
                           checked={selectedTaskId === t.id}
                           onChange={() => setSelectedTaskId(t.id)}
+                          className="accent-mind-primary"
                         />
                         <div>
                           <div className="font-medium">{t.title}</div>
@@ -320,7 +349,7 @@ const PomodoroPage: React.FC = () => {
                 </div>
               )}
 
-              <div className="pt-2 border-t border-mind-border/60 space-y-1">
+              <div className="pt-2 border-t border-mind-border/60 space-y-1 dark:border-[#4A3C60]">
                 <div className="text-[11px] font-semibold uppercase tracking-wide text-mind-textSoft">
                   Or create a new focus task
                 </div>
@@ -331,6 +360,8 @@ const PomodoroPage: React.FC = () => {
                     setCustomTask(e.target.value);
                     if (selectedTaskId !== null) setSelectedTaskId(null);
                   }}
+                  // FIX: Input dark mode styling
+                  className="dark:bg-[#362C47] dark:text-white dark:border-[#4A3C60] dark:placeholder-text-mind-textSoft"
                 />
                 <p className="text-[11px] text-mind-textMuted">
                   This won&apos;t overwrite your Planner tasks. It&apos;s just
@@ -345,6 +376,7 @@ const PomodoroPage: React.FC = () => {
                 variant="outline"
                 type="button"
                 onClick={() => setShowTaskModal(false)}
+                className="dark:text-white dark:border-[#4A3C60] hover:dark:bg-[#4A3C60]/30"
               >
                 Cancel
               </Button>

@@ -14,7 +14,10 @@ const ChatPage: React.FC = () => {
     {
       sender: "assistant",
       text: "Hi there! 👋 I'm your study buddy. How can I help you today? You can ask me for study tips, tell me how you're feeling, or just chat!",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     },
   ]);
 
@@ -22,7 +25,7 @@ const ChatPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto scroll
+  // Auto-scroll to latest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
@@ -33,7 +36,10 @@ const ChatPage: React.FC = () => {
     const userMsg: Message = {
       sender: "user",
       text: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -51,8 +57,11 @@ const ChatPage: React.FC = () => {
 
       const assistantMsg: Message = {
         sender: "assistant",
-        text: data.reply || "I'm here for you!",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        text: data.reply || "I'm here for you! 💜",
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -62,7 +71,10 @@ const ChatPage: React.FC = () => {
         {
           sender: "assistant",
           text: "I'm having trouble responding right now, but I'm here with you. 💜",
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
         },
       ]);
     }
@@ -72,27 +84,29 @@ const ChatPage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full w-full space-y-5">
-      
-      {/* ------ Header (matches your screenshot) ------ */}
+      {/* Header */}
       <div className="py-2">
-        <h1 className="text-2xl font-semibold text-mind-textMain flex items-center gap-2">
+        <h1 className="text-3xl font-bold text-mind-textMain dark:text-[#D9C8FF] drop-shadow-sm flex items-center gap-2">
           <span className="text-mind-primary text-3xl">💬</span>
           Study Buddy
         </h1>
-        <p className="text-sm text-mind-textSoft">
+        <p className="text-sm text-mind-textSoft dark:text-[#B8A2E0] mt-1">
           Your motivational companion for study support
         </p>
       </div>
 
-      {/* ------ Chat Panel ------ */}
-      <Card className="flex flex-col h-[75vh] overflow-hidden rounded-3xl bg-white shadow-soft border border-mind-border">
-        
-        {/* Messages Area */}
+      {/* Chat Container */}
+      <Card className="flex flex-col h-[75vh] overflow-hidden rounded-3xl bg-white dark:bg-[#2C2435] border dark:border-[#3A314D]">
+        {/* Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex w-full ${msg.sender === "assistant" ? "justify-start" : "justify-end"}`}
+              className={`flex w-full ${
+                msg.sender === "assistant"
+                  ? "justify-start"
+                  : "justify-end"
+              }`}
             >
               {/* Assistant Avatar */}
               {msg.sender === "assistant" && (
@@ -106,25 +120,36 @@ const ChatPage: React.FC = () => {
               {/* Message Bubble */}
               <div
                 className={`
-                  max-w-[70%] px-4 py-3 rounded-2xl text-sm whitespace-pre-line
+                  max-w-[70%] px-4 py-3 rounded-2xl text-sm whitespace-pre-line shadow-sm
+
                   ${
                     msg.sender === "assistant"
-                      ? "bg-mind-primary/20 text-mind-textMain rounded-tl-none"
-                      : "bg-mind-primary text-white rounded-tr-none"
+                      ? `
+                        bg-[#F7F2FF] 
+                        text-[#4A307A] 
+                        rounded-tl-none
+                        dark:bg-[#2E263D]
+                        dark:text-[#E9DFFF]
+                      `
+                      : `
+                        bg-[#E5D4FF] 
+                        text-[#4A307A] 
+                        rounded-tr-none
+                        dark:bg-[#7A5BDB]
+                        dark:text-white
+                      `
                   }
                 `}
               >
                 {msg.text}
-                <div className="mt-1 text-[10px] opacity-60">
-                  {msg.timestamp}
-                </div>
+                <div className="mt-1 text-[10px] opacity-60">{msg.timestamp}</div>
               </div>
             </div>
           ))}
 
           {/* Typing Indicator */}
           {loading && (
-            <div className="flex items-center gap-2 text-mind-primary/70 text-sm">
+            <div className="flex items-center gap-2 text-mind-primary text-sm pl-2">
               <div className="w-2 h-2 rounded-full bg-mind-primary animate-bounce"></div>
               <div className="w-2 h-2 rounded-full bg-mind-primary animate-bounce delay-150"></div>
               <div className="w-2 h-2 rounded-full bg-mind-primary animate-bounce delay-300"></div>
@@ -134,15 +159,17 @@ const ChatPage: React.FC = () => {
           <div ref={chatEndRef} />
         </div>
 
-        {/* ------ Input Area (matches screenshot) ------ */}
-        <div className="p-4 border-t bg-mind-bg/40">
-          <div className="flex items-center bg-white rounded-full shadow-soft border border-mind-border px-4">
+        {/* Input Section */}
+        <div className="p-4 border-t bg-mind-bg/40 dark:bg-[#1F1B24] border-mind-border/40 dark:border-[#3A314D]">
+          <div className="flex items-center bg-white dark:bg-[#2C2435] rounded-full shadow-soft border border-mind-border px-4 dark:border-[#4A3C60]">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               placeholder="Type a message..."
-              className="flex-1 py-3 text-sm focus:outline-none text-mind-textMain placeholder:text-mind-textSoft"
+              className="flex-1 py-3 text-sm focus:outline-none bg-transparent
+                text-mind-textMain dark:text-[#E9DFFF]
+                placeholder:text-mind-textSoft dark:placeholder:text-[#C9B5E8]"
             />
             <button
               onClick={sendMessage}

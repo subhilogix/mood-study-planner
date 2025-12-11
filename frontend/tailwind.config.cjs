@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
@@ -16,7 +17,15 @@ module.exports = {
           textMain: "#4B3A6F",
           textSoft: "#7C6F92",
           textMuted: "#6D6D6D",
-          accentMint: "#DFF7EB"
+
+          // TRUE PURPLE DARK THEME
+          bgDark: "#131214",
+          cardDark: "#1F1B24",
+          cardSoftDark: "#2E263D",
+          textMainDark: "#E6DFFF",
+          textSoftDark: "#BFAFE8",
+          borderDark: "#3A314D",
+          accent: "#7C5BDE"
         }
       },
       borderRadius: {
@@ -27,7 +36,7 @@ module.exports = {
         soft: "0 8px 24px rgba(15,23,42,0.05)"
       },
       fontFamily: {
-        sans: ['system-ui', 'SF Pro Text', 'Inter', 'sans-serif']
+        sans: ["system-ui", "SF Pro Text", "Inter", "sans-serif"]
       }
     }
   },

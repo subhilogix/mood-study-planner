@@ -194,3 +194,19 @@ def create_calendar_event(event: CalendarEventCreate):
         "start": start_dt_str,
         "end": end_dt_str,
     }
+@router.post("/disconnect")
+def google_calendar_disconnect():
+    global CALENDAR_TOKENS
+
+    # Clear tokens
+    CALENDAR_TOKENS = {
+        "access_token": None,
+        "refresh_token": None,
+        "token_uri": None,
+        "client_id": None,
+        "client_secret": None,
+        "scopes": None,
+        "expiry": None,
+    }
+
+    return {"success": True, "message": "Google Calendar disconnected"}

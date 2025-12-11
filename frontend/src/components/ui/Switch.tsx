@@ -5,23 +5,23 @@ interface SwitchProps {
   onChange: (value: boolean) => void;
 }
 
-export const Switch: React.FC<SwitchProps> = ({ checked, onChange }) => {
+export const Switch = ({ checked, onChange }: SwitchProps) => {
   return (
     <button
-      type="button"
-      className={`flex h-5 w-9 items-center rounded-full border transition-all ${
-        checked
-          ? "border-mind-primaryDeep bg-mind-primary"
-          : "border-mind-border bg-white"
-      }`}
       onClick={() => onChange(!checked)}
-      aria-pressed={checked}
+      className={`
+        w-12 h-6 rounded-full transition relative 
+        ${checked ? "bg-[#7C5BDE]" : "bg-gray-300 dark:bg-[#3A314D]"}
+      `}
     >
-      <span
-        className={`h-4 w-4 rounded-full bg-white shadow-soft transition-transform ${
-          checked ? "translate-x-4" : "translate-x-0.5"
-        }`}
+      <div
+        className={`
+          absolute top-1 w-4 h-4 bg-white rounded-full transition 
+          ${checked ? "left-7" : "left-1"}
+        `}
       />
     </button>
   );
 };
+
+export default Switch;

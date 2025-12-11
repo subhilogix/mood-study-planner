@@ -1,50 +1,93 @@
-from typing import List
-
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from ..database import get_session
-from ..models import JournalEntry, JournalCreate, JournalRead
+from app.database import get_session
+from app.models import (
+    JournalEntry,
+    JournalCreate,
+    JournalRead,
+)
+from app.emotion import analyze_emotion_text
+from app.chat_ai import generate_reflection_text
+
 
 router = APIRouter(prefix="/journal", tags=["journal"])
 
 
-@router.get("/", response_model=List[JournalRead])
-def list_journal_entries(session: Session = Depends(get_session)):
+# ---------------------------------------------------------
+# GET ALL JOURNAL ENTRIES
+# ---------------------------------------------------------
+@router.get("/", response_model=list[JournalRead])
+def get_all_entries(session: Session = Depends(get_session)):
     entries = session.exec(
-        select(JournalEntry).order_by(JournalEntry.date.desc())
+        select(JournalEntry).order_by(JournalEntry.created_at.desc())
     ).all()
     return entries
 
 
-@router.post(
-    "/", response_model=JournalRead, status_code=status.HTTP_201_CREATED
-)
-def create_journal_entry(
-    payload: JournalCreate, session: Session = Depends(get_session)
-):
-    entry = JournalEntry.from_orm(payload)
+# ---------------------------------------------------------
+# CREATE NEW JOURNAL ENTRY
+# ---------------------------------------------------------
+@router.post("/", response_model=JournalRead)
+def create_entry(payload: JournalCreate, session: Session = Depends(get_session)):
+
+    # Run ML emotion model
+    emotion = None
+    if payload.content:
+        emotion = analyze_emotion_text(payload.content)
+
+    emotion_label = emotion["label"] if emotion else None
+    emotion_score = emotion["score"] if emotion else None
+
+    # Generate AI reflection (Gemini)
+    reflection = generate_reflection_text(payload.content, emotion_label)
+
+    entry = JournalEntry(
+        date=payload.date,
+        content=payload.content,
+        mood_id=payload.mood_id,
+        emotion_label=emotion_label,
+        emotion_score=emotion_score,
+        ai_reflection=reflection,
+        is_favorite=False
+    )
+
     session.add(entry)
     session.commit()
     session.refresh(entry)
+
     return entry
 
 
-@router.get("/{entry_id}", response_model=JournalRead)
-def get_journal_entry(entry_id: int, session: Session = Depends(get_session)):
+# ---------------------------------------------------------
+# TOGGLE FAVORITE
+# ---------------------------------------------------------
+@router.patch("/{entry_id}/favorite", response_model=JournalRead)
+def toggle_favorite(entry_id: int, session: Session = Depends(get_session)):
+
     entry = session.get(JournalEntry, entry_id)
     if not entry:
-        raise HTTPException(status_code=404, detail="Journal entry not found")
+        raise HTTPException(status_code=404, detail="Entry not found")
+
+    entry.is_favorite = not entry.is_favorite
+    session.add(entry)
+    session.commit()
+    session.refresh(entry)
+
     return entry
 
 
-@router.delete("/{entry_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_journal_entry(
-    entry_id: int, session: Session = Depends(get_session)
-):
+# ---------------------------------------------------------
+# DELETE ENTRY
+# ---------------------------------------------------------
+@router.delete("/{entry_id}")
+def delete_entry(entry_id: int, session: Session = Depends(get_session)):
+
     entry = session.get(JournalEntry, entry_id)
     if not entry:
-        raise HTTPException(status_code=404, detail="Journal entry not found")
+        raise HTTPException(status_code=404, detail="Entry not found")
+
     session.delete(entry)
     session.commit()
-    return {"ok": True}
+
+    return {"status": "deleted"}
