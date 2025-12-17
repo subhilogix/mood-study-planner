@@ -25,7 +25,8 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-mind-bg dark:bg-[#131214]">
+    <div className="min-h-screen flex items-center justify-center
+  bg-[#F4F0FF] dark:bg-[#1F1B2E]">
       <div className="bg-white dark:bg-[#1F1B24] p-6 rounded-xl shadow-md w-full max-w-md border dark:border-[#3A314D]">
         
         <h1 className="text-xl font-bold mb-4 text-mind-textMain dark:text-[#E6DFFF]">
@@ -63,4 +64,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default LoginPage;   
