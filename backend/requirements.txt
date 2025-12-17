@@ -5,7 +5,7 @@ transformers
 torch
 pydantic>=2.0
 python-multipart
-
+gunicorn
 # Google Calendar integration
 google-auth
 google-auth-oauthlib
