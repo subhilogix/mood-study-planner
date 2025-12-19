@@ -1,21 +1,43 @@
 
-<p id="description">This is an AI-powered bot designed to provide emotional support and assistance to individuals struggling with mental health issues. It can help individuals access mental health resources offer guidance and support. With the integration of Language translation this chatbot will be very efficient as it will be able to break the language barriers. The creation of a chatbot capable of language translation holds transformative potential acting as a catalyst in overcoming language barriers for effective communication and information exchange. Its impact spans diverse sectors including: healthcare commerce and governance etc. offering a versatile solution to bridge linguistic gaps.</p>
+
+
+<p align="center"><img src="https://github.com/subhilogix/mood-study-planner/blob/30b0df9fe3691001f718a104f7adad544b0f0a41/screenshot.jpg" alt="project-image"></p>
+<p id="description">MindStudy is a mood-aware study companion that helps students manage their mental well-being while staying productive.
+It lets users track their emotions, maintain a journal, organize daily tasks, and visualize their progress over time.
+By combining emotional awareness with planning features, MindStudy encourages healthy study habits, self-reflection, and balance instead of burnout.</p>
 
 
 <h2>🧐 Features</h2>
 
+Here're some of the project's best features:
+<ul>
+<li>Mood Tracking</li>
+<li>Emotion Analysis</li>
+<li>Personal Journaling</li>
+<li>Task & Study Planner</li>
+<li>Google Calendar Integration</li>
+<li>Track emotional changes</li>  
+<li>AI Study Companion (Chat-based)</li>
+<li>Student-Friendly UX</li>
+</ul>
 
 # How to Set Up it?
 
-The following instructions were tested on the Windows and Linux with Python 3.8.
+The following instructions were tested on the Windows and Linux with Python 3.13.
 
 1. Clone this repository
 
 ```
-git clone https://github.com/Rogendo/Mental-health-Chatbot.git
+git clone https://github.com/subhilogix/mood-study-planner.git
 ```
 ```
-cd Mental-health-Chatbot/
+cd mood-study-planner
+```
+
+BACKEND
+
+```
+cd backend
 ```
 
 2. Create and activate virtual environment 
@@ -39,6 +61,21 @@ pip install  -r requirements.txt
 
 4. Run the 
 ```
-flask --app app --debug run
+uvicorn app.main:app --reload --port 8000
+
+```
+FRONTEND 
+```
+cd frontend
+```
+1. Install requirements
+
+```
+npm install
+```
+2. Run the 
+
+```
+npm run dev
 
 ```
