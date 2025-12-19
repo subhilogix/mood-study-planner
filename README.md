@@ -12,7 +12,7 @@ By combining emotional awareness with planning features, MindStudy encourages he
 Here're some of the project's best features:
 <ul>
 <li>Mood Tracking</li>
-<li>Emotion Analysis</li>
+<li>ML based emotion Analysis</li>
 <li>Personal Journaling</li>
 <li>Task & Study Planner</li>
 <li>Google Calendar Integration</li>
@@ -79,3 +79,14 @@ npm install
 npm run dev
 
 ```
+<h2>Advancements</h2>
+
+<ul>
+  <li>AI-generated study timetable</li>
+  <li>Mood-based task difficulty adjustment</li>
+  <li>Deeper analytics charts</li>
+  <li>Mobile app version</li>
+</ul>
+
+
+
