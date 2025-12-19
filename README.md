@@ -79,7 +79,7 @@ npm install
 npm run dev
 
 ```
-<h2>Advancements</h2>
+<h2>Future Advancements</h2>
 
 <ul>
   <li>AI-generated study timetable</li>
